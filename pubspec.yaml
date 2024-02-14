@@ -17,6 +17,9 @@ dev_dependencies:
   # https://pub.dev/packages/lints
   lints: ^3.0.0
 
+  # https://pub.dev/packages/markdown
+  markdown: ^7.2.1
+
   # https://pub.dev/packages/test
   test: ^1.25.0
 
