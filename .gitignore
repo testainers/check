@@ -3,6 +3,4 @@
 .dart_tool/
 .idea/
 .env
-check.darwin
-check.gnu
-check.exe
+check
