@@ -3,24 +3,30 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:http/http.dart';
 
-const String version = 'dev';
+import 'returned_data.dart';
+
+const String version = '0.0.1';
 
 ///
 ///
 ///
-enum Method { head, get, post, put, delete, patch }
+enum Method { head, get, post, put, patch, delete }
 
 ///
 ///
 ///
 void main(List<String> arguments) async {
-  int code = await check(arguments);
+  final ReturnedData data = await check(arguments);
 
-  if (code >= 200 && code < 300) {
-    exit(0);
-  } else {
-    exit(code);
+  if (data.statusCode > 99) {
+    print(data.statusCode);
   }
+
+  if (data.canFail) {
+    exit(data.exitCode);
+  }
+
+  exit(0);
 }
 
 ///
@@ -40,6 +46,23 @@ ArgParser buildParser() {
       help: 'Set the timeout for the request.',
       defaultsTo: '10',
       valueHelp: 'in seconds',
+    )
+    ..addOption(
+      'content-type',
+      help: 'Set the content type for the request.',
+      defaultsTo: 'application/json',
+      valueHelp: 'type',
+    )
+    ..addOption(
+      'user-agent',
+      help: 'Set the user agent for the request.',
+      defaultsTo: 'check/$version',
+      valueHelp: 'agent',
+    )
+    ..addFlag(
+      'fail',
+      help: 'Fail on non-200 status code.',
+      defaultsTo: true,
     )
     ..addFlag(
       'verbose',
@@ -65,23 +88,23 @@ void printUsage(ArgParser argParser) {
 ///
 ///
 ///
-Future<int> check(List<String> arguments) async {
+Future<ReturnedData> check(List<String> arguments) async {
   final ArgParser argParser = buildParser();
   try {
     final ArgResults results = argParser.parse(arguments);
     bool verbose = false;
     Method method = Method.get;
     int urlPos = 0;
-    Duration timeout = Duration(seconds: 10);
+    Duration timeout = const Duration(seconds: 10);
 
     if (results.wasParsed('help')) {
       printUsage(argParser);
-      return 1;
+      return ReturnedData.empty();
     }
 
     if (results.wasParsed('version')) {
       print('check version: $version');
-      return 1;
+      return ReturnedData.empty();
     }
 
     if (results.wasParsed('verbose')) {
@@ -90,7 +113,7 @@ Future<int> check(List<String> arguments) async {
 
     if (results.wasParsed('timeout')) {
       try {
-        int value = int.parse(results['timeout']);
+        final int value = int.parse(results['timeout']);
         if (value < 1) {
           throw FormatException('Invalid timeout value: ${results['timeout']}');
         }
@@ -106,7 +129,7 @@ Future<int> check(List<String> arguments) async {
     }
 
     if (results.rest.isEmpty) {
-      throw FormatException('No URL provided.');
+      throw const FormatException('No URL provided.');
     }
 
     try {
@@ -123,7 +146,7 @@ Future<int> check(List<String> arguments) async {
     }
 
     if (results.rest.length <= urlPos) {
-      throw FormatException('No URL provided.');
+      throw const FormatException('No URL provided.');
     }
 
     String url = results.rest[urlPos];
@@ -146,6 +169,11 @@ Future<int> check(List<String> arguments) async {
       print('[VERBOSE] URI: $uri');
     }
 
+    final Map<String, String> headers = <String, String>{
+      'User-Agent': results['user-agent'],
+      'Content-Type': results['content-type'],
+    };
+
     Response response;
 
     switch (method) {
@@ -153,57 +181,72 @@ Future<int> check(List<String> arguments) async {
         if (verbose) {
           print('[VERBOSE] HEAD: $uri');
         }
-        response = await head(uri).timeout(timeout);
-        break;
+        response = await head(uri, headers: headers).timeout(timeout);
       case Method.get:
         if (verbose) {
           print('[VERBOSE] GET: $uri');
         }
-        response = await get(uri).timeout(timeout);
-        break;
+        response = await get(uri, headers: headers).timeout(timeout);
       case Method.post:
         if (verbose) {
           print('[VERBOSE] POST: $uri');
         }
-        response = await post(uri).timeout(timeout);
-        break;
+        response = await post(uri, headers: headers).timeout(timeout);
       case Method.put:
         if (verbose) {
           print('[VERBOSE] PUT: $uri');
         }
-        response = await put(uri).timeout(timeout);
-        break;
-      case Method.delete:
-        if (verbose) {
-          print('[VERBOSE] DELETE: $uri');
-        }
-        response = await delete(uri).timeout(timeout);
-        break;
+        response = await put(uri, headers: headers).timeout(timeout);
       case Method.patch:
         if (verbose) {
           print('[VERBOSE] PATCH: $uri');
         }
-        response = await patch(uri).timeout(timeout);
-        break;
+        response = await patch(uri, headers: headers).timeout(timeout);
+      case Method.delete:
+        if (verbose) {
+          print('[VERBOSE] DELETE: $uri');
+        }
+        response = await delete(uri, headers: headers).timeout(timeout);
     }
 
-    int code = response.statusCode;
+    final int code = response.statusCode;
 
     if (verbose) {
       print('[VERBOSE] Status code: $code');
     }
 
-    return code;
+    int exitCode;
+
+    if (code < 199) {
+      exitCode = 9;
+    } else if (code >= 200 && code < 300) {
+      exitCode = 0;
+    } else if (code >= 545) {
+      exitCode = 255;
+    } else {
+      exitCode = code - 290;
+    }
+
+    return ReturnedData(
+      exitCode: exitCode,
+      statusCode: code,
+      canFail: results['fail'],
+    );
   } on FormatException catch (e) {
     print('');
     print(e.message);
     print('');
     printUsage(argParser);
-    return 0;
+    return ReturnedData(exitCode: 1, statusCode: 0, canFail: true);
   } on Exception catch (e) {
     print('');
     print(e);
     print('');
-    return 1;
+    return ReturnedData(exitCode: 7, statusCode: 0, canFail: true);
+  } on Error catch (e) {
+    print('');
+    print(e);
+    print('');
+    return ReturnedData(exitCode: 8, statusCode: 0, canFail: true);
   }
 }
