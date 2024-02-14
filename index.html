@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>testainers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp"
+          crossorigin="anonymous">
+</head>
+<body>
+  <div class="col-lg-8 mx-auto p-4 py-md-5">
+    <main>
+<h1 id="check">check</h1>
+<p>Introducing &quot;Check,&quot; our CLI HTTP Request tool engineered to simplify and
+expedite your web interactions. With its user-friendly commands and
+comprehensive features, Check empowers users to seamlessly navigate HTTP
+requests for tasks like API testing, data retrieval, and web development. Say
+farewell to cumbersome setups and clunky interfaces; Check prioritizes intuitive
+usability without sacrificing functionality. Whether you're a seasoned developer
+or just dipping your toes into web technologies, Check is your dependable
+companion for confidently mastering the intricacies of web requests.</p>
+<h2 id="examples">Examples</h2>
+<p>Check http://localhost:8080 with GET method.</p>
+<pre><code class="language-shell">check :8080
+</code></pre>
+<p>Check http://localhost:8080 with POST method.</p>
+<pre><code class="language-shell">check POST :8080
+</code></pre>
+<p>Check http://localhost:8080 with GET method and timeout to 5 seconds.</p>
+<pre><code class="language-shell">check -t 5 GET :8080
+</code></pre>
+<h3 id="exit-codes">Exit Codes</h3>
+<p>The exit codes in the range from 1 to 8 are reserved for specific application
+purposes.</p>
+<p>If the HTTP request returns a status code below 200, the exit code will be set
+to 9.</p>
+<p>For HTTP request status codes falling within the range of 200 to 299, the exit
+code will be set to 0, indicating a successful request.</p>
+<p>For status codes from 300 onwards, subtract 290 from the status code to
+determine the exit code.</p>
+<p>Any HTTP request code exceeding 545 will result in an exit code of 255,
+indicating an error condition beyond the tool's handling capability.</p>
+<table>
+<thead>
+<tr>
+<th>Request Status Code</th>
+<th>Exit Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 - 199</td>
+<td>9</td>
+</tr>
+<tr>
+<td>200 - 299</td>
+<td>0</td>
+</tr>
+<tr>
+<td>300</td>
+<td>10</td>
+</tr>
+<tr>
+<td>301</td>
+<td>11</td>
+</tr>
+<tr>
+<td>302</td>
+<td>12</td>
+</tr>
+<tr>
+<td>389</td>
+<td>99</td>
+</tr>
+<tr>
+<td>390</td>
+<td>100</td>
+</tr>
+<tr>
+<td>399</td>
+<td>109</td>
+</tr>
+<tr>
+<td>400</td>
+<td>110</td>
+</tr>
+<tr>
+<td>401</td>
+<td>111</td>
+</tr>
+<tr>
+<td>403</td>
+<td>113</td>
+</tr>
+<tr>
+<td>404</td>
+<td>114</td>
+</tr>
+<tr>
+<td>500</td>
+<td>210</td>
+</tr>
+<tr>
+<td>544</td>
+<td>254</td>
+</tr>
+<tr>
+<td>545</td>
+<td>255</td>
+</tr>
+<tr>
+<td>599</td>
+<td>255</td>
+</tr>
+</tbody>
+</table>
+<p>To check the status code, visit:</p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status">https://developer.mozilla.org/en-US/docs/Web/HTTP/Status</a></p>
+<p>To get the request status code, use the command:</p>
+<pre><code class="language-shell">CODE=$(check httpbingo.org/status/204)
+echo $CODE
+</code></pre>
+<h3 id="compile">Compile</h3>
+<pre><code class="language-shell">dart compile exe bin/check.dart -o check
+</code></pre>
+
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" 
+          integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" 
+          crossorigin="anonymous"></script>
+</body>
+</html>
