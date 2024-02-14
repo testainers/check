@@ -1,0 +1,34 @@
+name: Pull Request Tests
+
+on: [ pull_request ]
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Get Pubspec Version
+        run: |
+          VERSION=$(grep 'version:' pubspec.yaml | cut -c 10- | cut -f 1 -d '+')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Flutter Environment
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: false
+
+      - name: Dart Pub Get
+        timeout-minutes: 3
+        run: dart pub get
+
+      - name: Dart Analyze
+        timeout-minutes: 3
+        run: dart analyze --fatal-infos
+
+      - name: Dart Test
+        run: dart test
