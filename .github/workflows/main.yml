@@ -70,7 +70,7 @@ jobs:
         run: |
           genhtml coverage/lcov.info \
             --output-directory coverage/html/coverage \
-            --title "testainers" \
+            --title "check" \
             --show-details
 
       - name: Creating package filter.
@@ -81,6 +81,7 @@ jobs:
         with:
           publish_dir: ./coverage/html
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          cname: check.testainers.com
 
       - name: Creating a GitHub Tag
         uses: mathieudutour/github-tag-action@v6.2
