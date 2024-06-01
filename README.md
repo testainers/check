@@ -1,6 +1,15 @@
-# check
+<h1>
+<img src="https://testainers.com/assets/assets/images/testainers-80.png" alt="Testainers" title="Testainers">
+check
+</h1>
 
-Introducing "Check," our CLI HTTP Request tool engineered to simplify and
+[![Build With Love](https://img.shields.io/badge/%20built%20with-%20%E2%9D%A4-ff69b4.svg)](https://github.com/testainers/check/stargazers)
+[![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2Ftestainers%2Fcheck%2Freleases%2Flatest&query=name&label=version&color=orange)](https://github.com/testainers/check/releases/latest)
+[![Licence](https://img.shields.io/github/license/testainers/check?color=blue)](https://github.com/testainers/check/blob/main/LICENSE)
+[![Build](https://img.shields.io/github/actions/workflow/status/testainers/check/main.yml?branch=main)](https://github.com/testainers/check/releases/latest)
+[![Coverage Report](https://img.shields.io/badge/coverage-report-C08EA1)](https://testainers.github.io/check/coverage/)
+
+Introducing "Check", our CLI HTTP Request tool engineered to simplify and
 expedite your web interactions. With its user-friendly commands and
 comprehensive features, Check empowers users to seamlessly navigate HTTP
 requests for tasks like API testing, data retrieval, and web development. Say
@@ -8,6 +17,23 @@ farewell to cumbersome setups and clunky interfaces; Check prioritizes intuitive
 usability without sacrificing functionality. Whether you're a seasoned developer
 or just dipping your toes into web technologies, Check is your dependable
 companion for confidently mastering the intricacies of web requests.
+
+## Funding
+
+Your contribution will help drive the development of quality tools for the
+Flutter and Dart developer community. Any amount will be appreciated.
+Thank you for your continued support!
+
+[![BuyMeACoffee](https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-2.svg)](https://www.buymeacoffee.com/edufolly)
+
+## PIX
+
+Sua contribuição ajudará a impulsionar o desenvolvimento de ferramentas de
+qualidade para a comunidade de desenvolvedores Flutter e Dart. Qualquer quantia
+será apreciada.
+Obrigado pelo seu apoio contínuo!
+
+[![PIX](helpers/pix.png)](https://nubank.com.br/pagar/2bt2q/RBr4Szfuwr)
 
 ## Examples
 

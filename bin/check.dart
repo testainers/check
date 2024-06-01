@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 
 import 'returned_data.dart';
 
-const String version = '0.0.2';
+const String version = '0.0.3';
 
 ///
 ///
