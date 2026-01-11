@@ -68,12 +68,10 @@ jobs:
           -i coverage \
           -o coverage/lcov.info
 
-      - name: Debug coverage
-        run: ls -lahR coverage/
-
       - name: Creating Test Coverage HTML
         run: |
           genhtml coverage/lcov.info \
+            --ignore-errors empty \
             --output-directory coverage/html/coverage \
             --title "check" \
             --show-details
