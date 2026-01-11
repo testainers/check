@@ -5,16 +5,10 @@ import 'package:http/http.dart';
 
 import 'returned_data.dart';
 
-const String version = '0.0.3';
+const String version = 'dev';
 
-///
-///
-///
 enum Method { head, get, post, put, patch, delete }
 
-///
-///
-///
 void main(List<String> arguments) async {
   final ReturnedData data = await check(arguments);
 
@@ -29,9 +23,6 @@ void main(List<String> arguments) async {
   exit(0);
 }
 
-///
-///
-///
 ArgParser buildParser() {
   return ArgParser()
     ..addFlag(
@@ -77,17 +68,11 @@ ArgParser buildParser() {
     );
 }
 
-///
-///
-///
 void printUsage(ArgParser argParser) {
   print('Usage: check <flags> [METHOD] URL');
   print(argParser.usage);
 }
 
-///
-///
-///
 Future<ReturnedData> check(List<String> arguments) async {
   final ArgParser argParser = buildParser();
   try {

@@ -1,3 +1,7 @@
+## 0.0.4 [2026-01-11]
+
+- Updating project plugins, CI and dependencies.
+
 ## 0.0.3 [2024-06-01]
 
 - Updating project plugins, CI and dependencies.
