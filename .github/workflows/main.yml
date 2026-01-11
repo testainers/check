@@ -41,7 +41,6 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt install -y lcov
-          mkdir -p build
 
       - name: Dart Pub Get
         timeout-minutes: 3
@@ -54,9 +53,11 @@ jobs:
           --concurrency=$(grep -c processor /proc/cpuinfo)
 
       - name: Dart Compile
-        run: dart compile exe bin/check.dart -o build/check
+        run: |
+          mkdir -p build
+          dart compile exe bin/check.dart -o build/check
 
-      - name: Creating package filter.
+      - name: Creating package filter
         run: dart run helpers/package.dart
 
       - name: Creating lcov.info
@@ -66,6 +67,9 @@ jobs:
           --lcov \
           -i coverage \
           -o coverage/lcov.info
+
+      - name: Debug coverage
+        run: ls -lahR coverage/
 
       - name: Creating Test Coverage HTML
         run: |
