@@ -50,22 +50,14 @@ ArgParser buildParser() {
       defaultsTo: 'check/$version',
       valueHelp: 'agent',
     )
-    ..addFlag(
-      'fail',
-      help: 'Fail on non-200 status code.',
-      defaultsTo: true,
-    )
+    ..addFlag('fail', help: 'Fail on non-200 status code.', defaultsTo: true)
     ..addFlag(
       'verbose',
       abbr: 'v',
       negatable: false,
       help: 'Show additional command output.',
     )
-    ..addFlag(
-      'version',
-      negatable: false,
-      help: 'Print the tool version.',
-    );
+    ..addFlag('version', negatable: false, help: 'Print the tool version.');
 }
 
 void printUsage(ArgParser argParser) {
@@ -77,7 +69,7 @@ Future<ReturnedData> check(List<String> arguments) async {
   final ArgParser argParser = buildParser();
   try {
     final ArgResults results = argParser.parse(arguments);
-    bool verbose = false;
+    final verbose = results.wasParsed('verbose');
     Method method = Method.get;
     int urlPos = 0;
     Duration timeout = const Duration(seconds: 10);
@@ -90,10 +82,6 @@ Future<ReturnedData> check(List<String> arguments) async {
     if (results.wasParsed('version')) {
       print('check version: $version');
       return ReturnedData.empty();
-    }
-
-    if (results.wasParsed('verbose')) {
-      verbose = true;
     }
 
     if (results.wasParsed('timeout')) {
@@ -121,14 +109,10 @@ Future<ReturnedData> check(List<String> arguments) async {
       method = Method.values.byName(results.rest.first.toLowerCase());
       urlPos = 1;
     } on Error {
-      if (verbose) {
-        print('[VERBOSE] Using default method: GET');
-      }
+      if (verbose) print('[VERBOSE] Using default method: GET');
     }
 
-    if (verbose) {
-      print('[VERBOSE] Method: $method');
-    }
+    if (verbose) print('[VERBOSE] Method: $method');
 
     if (results.rest.length <= urlPos) {
       throw const FormatException('No URL provided.');
@@ -140,9 +124,7 @@ Future<ReturnedData> check(List<String> arguments) async {
       url = 'http://localhost$url';
     }
 
-    if (verbose) {
-      print('[VERBOSE] URL: $url');
-    }
+    if (verbose) print('[VERBOSE] URL: $url');
 
     Uri uri = Uri.parse(url);
 
@@ -150,9 +132,7 @@ Future<ReturnedData> check(List<String> arguments) async {
       uri = Uri.parse('http://$uri');
     }
 
-    if (verbose) {
-      print('[VERBOSE] URI: $uri');
-    }
+    if (verbose) print('[VERBOSE] URI: $uri');
 
     final Map<String, String> headers = <String, String>{
       'User-Agent': results['user-agent'],
@@ -163,42 +143,28 @@ Future<ReturnedData> check(List<String> arguments) async {
 
     switch (method) {
       case Method.head:
-        if (verbose) {
-          print('[VERBOSE] HEAD: $uri');
-        }
+        if (verbose) print('[VERBOSE] HEAD: $uri');
         response = await head(uri, headers: headers).timeout(timeout);
       case Method.get:
-        if (verbose) {
-          print('[VERBOSE] GET: $uri');
-        }
+        if (verbose) print('[VERBOSE] GET: $uri');
         response = await get(uri, headers: headers).timeout(timeout);
       case Method.post:
-        if (verbose) {
-          print('[VERBOSE] POST: $uri');
-        }
+        if (verbose) print('[VERBOSE] POST: $uri');
         response = await post(uri, headers: headers).timeout(timeout);
       case Method.put:
-        if (verbose) {
-          print('[VERBOSE] PUT: $uri');
-        }
+        if (verbose) print('[VERBOSE] PUT: $uri');
         response = await put(uri, headers: headers).timeout(timeout);
       case Method.patch:
-        if (verbose) {
-          print('[VERBOSE] PATCH: $uri');
-        }
+        if (verbose) print('[VERBOSE] PATCH: $uri');
         response = await patch(uri, headers: headers).timeout(timeout);
       case Method.delete:
-        if (verbose) {
-          print('[VERBOSE] DELETE: $uri');
-        }
+        if (verbose) print('[VERBOSE] DELETE: $uri');
         response = await delete(uri, headers: headers).timeout(timeout);
     }
 
     final int code = response.statusCode;
 
-    if (verbose) {
-      print('[VERBOSE] Status code: $code');
-    }
+    if (verbose) print('[VERBOSE] Status code: $code');
 
     int exitCode;
 

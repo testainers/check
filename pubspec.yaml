@@ -1,6 +1,6 @@
 name: check
 description: Minimum HTTP CLI.
-version: 0.0.3
+version: 0.0.4
 repository: https://github.com/testainers/check
 homepage: https://check.testainers.com
 
