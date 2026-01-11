@@ -35,6 +35,14 @@ Obrigado pelo seu apoio contínuo!
 
 [![PIX](helpers/pix.png)](https://nubank.com.br/pagar/2bt2q/RBr4Szfuwr)
 
+## Download
+
+```shell
+curl -sSLO https://github.com/testainers/check/releases/latest/download/check
+chmod a+x check
+sudo mv check /usr/local/bin
+```
+
 ## Examples
 
 Check http://localhost:8080 with GET method.
@@ -53,6 +61,22 @@ Check http://localhost:8080 with GET method and timeout to 5 seconds.
 
 ```shell
 check -t 5 GET :8080
+```
+
+Add `check` directly from dockerfile.
+
+```dockerfile
+ADD https://github.com/testainers/check/releases/latest/download/check \
+    /usr/bin/check
+
+RUN chmod +x /usr/bin/check
+```
+
+Docker HEALTHCHECK example:
+
+```dockerfile
+HEALTHCHECK --start-period=5s --interval=15s --timeout=10s --retries=3 \
+    CMD check :8081/api/health || exit 1
 ```
 
 ### Exit Codes

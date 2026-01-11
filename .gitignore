@@ -3,4 +3,5 @@
 .dart_tool/
 .idea/
 .env
+pubspec.lock
 check
