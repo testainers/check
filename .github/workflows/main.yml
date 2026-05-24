@@ -61,6 +61,7 @@ jobs:
           genhtml coverage/lcov.info \
             --output-directory coverage/html/coverage \
             --title "check" \
+            --dark-mode \
             --show-details
 
       - name: Creating package filter.
@@ -83,6 +84,7 @@ jobs:
     name: Build ${{ matrix.target }}
     needs: prepare
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
@@ -116,10 +118,6 @@ jobs:
         shell: bash
         run: dart pub get
 
-#      - name: Dart Test
-#        shell: bash
-#        run: dart test
-
       - name: Update Version in Code
         shell: bash
         run: dart run helpers/update_version.dart ${{ needs.prepare.outputs.VERSION }}
@@ -141,6 +139,7 @@ jobs:
     name: Create GitHub Release
     needs: [ prepare, build ]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
     steps:

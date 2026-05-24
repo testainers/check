@@ -29,7 +29,7 @@ Thank you for your continued support!
 ## Download
 
 ```shell
-curl -sSLO https://github.com/testainers/check/releases/latest/download/check
+curl -sSLO https://github.com/testainers/check/releases/latest/download/check-linux-amd64
 chmod a+x check
 sudo mv check /usr/local/bin
 ```
@@ -57,7 +57,7 @@ check -t 5 GET :8080
 Add `check` directly from dockerfile.
 
 ```dockerfile
-ADD https://github.com/testainers/check/releases/latest/download/check \
+ADD https://github.com/testainers/check/releases/latest/download/check-linux-amd64 \
     /usr/bin/check
 
 RUN chmod +x /usr/bin/check
