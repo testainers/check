@@ -1,25 +1,16 @@
+import 'package:check/main.dart';
+import 'package:check/returned_data.dart';
 import 'package:test/test.dart';
 import 'package:testainers/testainers.dart';
 
-import '../bin/check.dart';
-import '../bin/returned_data.dart';
-
-///
-///
-///
 void main() {
-  ///
-  ///
-  ///
   group('basic tests', () {
     final TestainersHttpbucket container = TestainersHttpbucket();
 
-    ///
     setUpAll(() async {
       await container.start();
     });
 
-    ///
     test('Root Get', () async {
       expect(
         await check(<String>[':${container.httpPort}']),
@@ -27,7 +18,6 @@ void main() {
       );
     });
 
-    ///
     test('Method GET', () async {
       expect(
         await check(<String>[':${container.httpPort}/methods']),
@@ -35,7 +25,6 @@ void main() {
       );
     });
 
-    ///
     test('Method HEAD', () async {
       expect(
         await check(<String>['HEAD', ':${container.httpPort}/methods']),
@@ -43,7 +32,6 @@ void main() {
       );
     });
 
-    ///
     test('Method POST', () async {
       expect(
         await check(<String>['POST', ':${container.httpPort}/methods']),
@@ -51,7 +39,6 @@ void main() {
       );
     });
 
-    ///
     test('Method PUT', () async {
       expect(
         await check(<String>['PUT', ':${container.httpPort}/methods']),
@@ -59,7 +46,6 @@ void main() {
       );
     });
 
-    ///
     test('Method PATCH', () async {
       expect(
         await check(<String>['PATCH', ':${container.httpPort}/methods']),
@@ -67,7 +53,6 @@ void main() {
       );
     });
 
-    ///
     test('Method DELETE', () async {
       expect(
         await check(<String>['DELETE', ':${container.httpPort}/methods']),
@@ -75,7 +60,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 200', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/200']),
@@ -83,7 +67,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 201', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/201']),
@@ -91,7 +74,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 202', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/202']),
@@ -99,7 +81,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 204', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/204']),
@@ -107,7 +88,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 300', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/300']),
@@ -115,7 +95,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 300 no Fail', () async {
       expect(
         await check(<String>['--no-fail', ':${container.httpPort}/status/300']),
@@ -123,7 +102,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 300', () async {
       expect(
         await check(<String>['--no-fail', ':${container.httpPort}/status/300']),
@@ -131,7 +109,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 389', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/389']),
@@ -139,7 +116,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 390', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/390']),
@@ -147,7 +123,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 399', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/399']),
@@ -155,7 +130,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 400', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/400']),
@@ -163,7 +137,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 400 no Fail', () async {
       expect(
         await check(<String>['--no-fail', ':${container.httpPort}/status/400']),
@@ -171,7 +144,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 401', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/401']),
@@ -179,7 +151,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 403', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/403']),
@@ -187,7 +158,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 404', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/404']),
@@ -195,7 +165,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 500', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/500']),
@@ -203,7 +172,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 500 no Fail', () async {
       expect(
         await check(<String>['--no-fail', ':${container.httpPort}/status/500']),
@@ -211,7 +179,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 544', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/544']),
@@ -219,7 +186,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 545', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/545']),
@@ -227,7 +193,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 546', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/546']),
@@ -235,7 +200,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 599', () async {
       expect(
         await check(<String>[':${container.httpPort}/status/599']),
@@ -243,7 +207,6 @@ void main() {
       );
     });
 
-    ///
     test('Status GET 599 no Fail', () async {
       expect(
         await check(<String>['--no-fail', ':${container.httpPort}/status/599']),
@@ -251,7 +214,6 @@ void main() {
       );
     });
 
-    ///
     tearDownAll(container.stop);
   });
 }
