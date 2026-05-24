@@ -6,29 +6,24 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - name: Code Checkout
         uses: actions/checkout@v6
 
-      - name: Get Pubspec Version
-        run: |
-          VERSION=$(grep 'version:' pubspec.yaml | cut -c 10- | cut -f 1 -d '+')
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Flutter Environment
-        uses: subosito/flutter-action@v2
+      - name: Dart Environment
+        uses: dart-lang/setup-dart@v1
         with:
-          channel: 'stable'
-          cache: false
+          sdk: stable
 
       - name: Dart Pub Get
-        timeout-minutes: 3
         run: dart pub get
 
       - name: Dart Analyze
-        timeout-minutes: 3
         run: dart analyze --fatal-infos
 
       - name: Dart Test
-        run: dart test
+        run: |
+          dart test \
+            --reporter=github \
+            --concurrency=$(grep -c processor /proc/cpuinfo)

@@ -4,74 +4,61 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-    name: Tests, Build & Deploy
+  prepare:
+    name: Prepare Release
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     permissions:
       contents: write
+    outputs:
+      VERSION: ${{ steps.get_version.outputs.VERSION }}
     steps:
       - name: Code Checkout
         uses: actions/checkout@v6
 
       - name: Get Pubspec Version
+        id: get_version
         run: |
           VERSION=$(grep 'version:' pubspec.yaml | cut -c 10- | cut -f 1 -d '+')
-          sed -i "s/dev/$VERSION/g" bin/check.dart
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Check if version is used
         run: |
-          URL=$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/tags/${{ env.VERSION }}
+          URL=$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/tags/${{ steps.get_version.outputs.VERSION }}
           CODE=$(curl -s -H "Authorization: Bearer ${{ github.token }}" -o /dev/null -w "%{http_code}" "$URL")
           if [ "$CODE" != 404 ]; then
-            echo "Release '$VERSION' already exists. ($CODE)"
+            echo "Release 'v${{ steps.get_version.outputs.VERSION }}' already exists. ($CODE)"
             exit 1
           fi
 
-      - name: Flutter Environment
-        uses: subosito/flutter-action@v2
+      - name: Dart Environment
+        uses: dart-lang/setup-dart@v1
         with:
-          channel: 'stable'
-          cache: false
+          sdk: stable
+
+      - name: Dart Pub Get
+        run: dart pub get
+
+      - name: Dart Analyze
+        run: dart analyze --fatal-infos
 
       - name: Install lcov
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo apt-get update -y
+          sudo apt update -y
           sudo apt install -y lcov
-
-      - name: Dart Pub Get
-        timeout-minutes: 3
-        run: dart pub get
 
       - name: Dart Test
         run: |
           dart test \
-          --coverage=coverage \
+          --coverage-path=./coverage/lcov.info \
+          --reporter=github \
           --concurrency=$(grep -c processor /proc/cpuinfo)
-
-      - name: Dart Compile
-        run: |
-          mkdir -p build
-          dart compile exe bin/check.dart -o build/check
-
-      - name: Creating package filter
-        run: dart run helpers/package.dart
-
-      - name: Creating lcov.info
-        run: |
-          dart run coverage:format_coverage \
-          --packages=coverage/package.json \
-          --lcov \
-          -i coverage \
-          -o coverage/lcov.info
 
       - name: Creating Test Coverage HTML
         run: |
           genhtml coverage/lcov.info \
-            --ignore-errors empty \
             --output-directory coverage/html/coverage \
             --title "check" \
             --show-details
@@ -89,14 +76,85 @@ jobs:
       - name: Creating a GitHub Tag
         uses: mathieudutour/github-tag-action@v6.2
         with:
-          custom_tag: ${{ env.VERSION }}
-          tag_prefix: ''
+          custom_tag: ${{ steps.get_version.outputs.VERSION }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    name: Build ${{ matrix.target }}
+    needs: prepare
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            target: linux-amd64
+            ext: ""
+          - runner: ubuntu-24.04-arm
+            target: linux-arm64
+            ext: ""
+          - runner: macos-15-intel
+            target: macos-intel
+            ext: ""
+          - runner: macos-15
+            target: macos-silicon
+            ext: ""
+          - runner: windows-latest
+            target: windows-amd64
+            ext: ".exe"
+
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v6
+
+      - name: Dart Environment
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Dart Pub Get
+        shell: bash
+        run: dart pub get
+
+      - name: Dart Test
+        shell: bash
+        run: dart test
+
+      - name: Update Version in Code
+        shell: bash
+        run: dart run helpers/update_version.dart ${{ needs.prepare.outputs.VERSION }}
+
+      - name: Dart Compile
+        shell: bash
+        run: |
+          mkdir -p build
+          dart compile exe bin/check.dart -o build/check-${{ matrix.target }}${{ matrix.ext }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: check-${{ matrix.target }}
+          path: build/check-${{ matrix.target }}${{ matrix.ext }}
+          retention-days: 1
+
+  release:
+    name: Create GitHub Release
+    needs: [ prepare, build ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+          merge-multiple: true
 
       - name: Create a GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ env.VERSION }}
+          tag: ${{ needs.prepare.outputs.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
-          artifacts: build/*
+          artifacts: artifacts/*
+          generateReleaseNotes: true
