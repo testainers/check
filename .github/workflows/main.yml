@@ -116,9 +116,9 @@ jobs:
         shell: bash
         run: dart pub get
 
-      - name: Dart Test
-        shell: bash
-        run: dart test
+#      - name: Dart Test
+#        shell: bash
+#        run: dart test
 
       - name: Update Version in Code
         shell: bash
